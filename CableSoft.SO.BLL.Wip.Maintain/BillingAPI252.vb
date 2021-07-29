@@ -104,9 +104,7 @@ Public Class BillingAPI252
             AddTemMaintain(dsWip, dsCommon, InData)
 
             result = _SaveData.Save(EditMode.Append, False, dsWip, False)
-            result.ResultBoolean = False
-            result.ErrorCode = -1
-            result.ErrorMessage = "RD Debug"
+            
             If result.ResultBoolean Then
                 'dtSNo.Rows(0).Item("AMT") = result.ResultXML
                 dtSNo.Rows(0).Item("SNO") = dsWip.Tables(fMaintain_Wip).Rows(0).Item("SNO")
