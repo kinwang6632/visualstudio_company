@@ -240,7 +240,7 @@ Public Class BillingAPI253
             Dim SalesName As Object = WipData.Tables("Wip").Rows(0).Item("SalesName")
             Dim sno As Object = WipData.Tables("Wip").Rows(0).Item("SNo")
             DAO.ExecSclr(_DAL.updSO009SnoAddr, New Object() {ReInstAddrNo, ReInstAddress, _
-                                                             servcode, strtcode, SalesCode, SalesName, sno})
+                                                             servcode, strtcode, SalesCode, SalesName, ReInstAddrNo, ReInstAddress, sno})
 
             DAO.ExecSclr(_DAL.updSO007SnoAddr, New Object() {ReInstAddrNo, ReInstAddress, _
                                                              servcode, strtcode, SalesCode, SalesName})
