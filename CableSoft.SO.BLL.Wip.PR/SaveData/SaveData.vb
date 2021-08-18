@@ -17,6 +17,15 @@ Public Class SaveData
     Private Const fMaintain_Charge As String = "Charge"
     Private Const fMaintain_ChangeFacility As String = "ChangeFacility"
     Private Const fMaintain_Parameter As String = "WipPara"
+    Private _Ref3ServiceType As String = "C"
+    Public Property Ref3ServiceType() As String
+        Get
+            Return _Ref3ServiceType
+        End Get
+        Set(ByVal value As String)
+            _Ref3ServiceType = value
+        End Set
+    End Property
 
 
     Public Sub New()
@@ -218,8 +227,9 @@ Public Class SaveData
                         End If
 
                         '#7922 2019.03.19 移機單需要優先取得新地址的相關資料，優先填寫到資料內。
-                        If WipRefNo = 3 AndAlso WipRow.Item("ServiceType") = "C" Then
-                            
+                        '#8802
+                        'If WipRefNo = 3 AndAlso WipRow.Item("ServiceType") = "C" Then
+                        If WipRefNo = 3 AndAlso WipRow.Item("ServiceType").ToString.IndexOf(_Ref3ServiceType) >= 0 Then
                             If Not ReflashRefno3AddrData(WipData) Then
                                 Return New RIAResult() With {.ResultBoolean = False, .ErrorCode = -3999, .ErrorMessage = strMsgShow}
                             End If
@@ -247,7 +257,9 @@ Public Class SaveData
                         Return New RIAResult() With {.ResultBoolean = False, .ErrorCode = -3999, .ErrorMessage = strMsgShow}
                     End If
                     '#8781  fill mainsno by sno itself by kin 2021/07/06
-                    If WipRefNo = 3 AndAlso WipRow.Item("ServiceType") = "C" Then
+                    '#8802
+                    'If WipRefNo = 3 AndAlso WipRow.Item("ServiceType") = "C" Then
+                    If WipRefNo = 3 AndAlso WipRow.Item("ServiceType").ToString.IndexOf(_Ref3ServiceType) >= 0 Then
                         DAO.ExecSclr(_DAL.updMainSnoSelf, New Object() {WipData.Tables("wip").Rows(0).Item("SNo")})
 
 
@@ -420,14 +432,18 @@ Public Class SaveData
                         End If
                     End If
                     '#7536 2017.08.24 測試不OK。要求CATV工單如果工單參考號=3，需要增加參考號4的工單。
-                    If EditMode = CableSoft.BLL.Utility.EditMode.Append AndAlso WipRefNo = 3 AndAlso WipRow.Item("ServiceType") = "C" Then
-                        If Not CreateRefno4PR(WipData, "C") Then
+                    '#8802
+                    'If EditMode = CableSoft.BLL.Utility.EditMode.Append AndAlso WipRefNo = 3 AndAlso WipRow.Item("ServiceType") = "C" Then
+                    If EditMode = CableSoft.BLL.Utility.EditMode.Append AndAlso WipRefNo = 3 AndAlso WipRow.Item("ServiceType").ToString.IndexOf(_Ref3ServiceType) >= 0 Then
+                        '#8802
+                        'If Not CreateRefno4PR(WipData, "C") Then
+                        If Not CreateRefno4PR(WipData, _Ref3ServiceType) Then
                             strMsgShow = "ChangeAccountInvoice"
                             '2018.12.27 by Corey 原本回復錯誤訊息功能是用 Return RIAResult的方式。
                             '           之後因為工單是用Boolean的方式回傳。現在又因為整批處理工單，又改用Result方式回傳。
                             Return New RIAResult() With {.ResultBoolean = False, .ErrorCode = -3999, .ErrorMessage = strMsgShow}
                         End If
-                        
+
 
                     End If
 
@@ -523,6 +539,7 @@ Public Class SaveData
                     End If
                     '2014/05/05 Jacky 6729 Luke 移機將其他客戶底下全服務移機功能
                     If MoveFaciData IsNot Nothing Then
+                        '#8802
                         Dim gresult As RIAResult = OtherServicePR2(EditMode, WipData, MoveFaciData)
                         If gresult.ResultBoolean = False Then
                             'Throw New Exception(gresult.ErrorMessage)
@@ -1630,6 +1647,7 @@ Public Class SaveData
 
 #Region "移機順產生其他服務移機單"
     '#7922 OtherServicePR2
+    '#8802
     Private Function OtherServicePR2(EditMode As EditMode,
                                     WipData As DataSet, MoveFaciData As DataSet) As RIAResult
         '#7922 2019.02.20 by Corey 因為需求要多設備產生多張工單，所以原本一個服務別一張工單的做法取消。

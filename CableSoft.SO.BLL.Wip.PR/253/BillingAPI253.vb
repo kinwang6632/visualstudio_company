@@ -198,6 +198,7 @@ Public Class BillingAPI253
         End Using
         '工單存檔
         Using bll As New SaveData(LoginInfo, DAO)
+
             If MoveFaciData Is Nothing Then
                 result = bll.Save(EditMode.Append, False, WipData, False)
             Else
