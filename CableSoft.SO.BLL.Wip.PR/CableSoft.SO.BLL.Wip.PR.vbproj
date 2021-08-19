@@ -122,6 +122,9 @@
     <Compile Include="259\BillingAPI259.vb" />
     <Compile Include="259\BillingAPI259DAL.vb" />
     <Compile Include="259\BillingAPI259DALMultiDB.vb" />
+    <Compile Include="260\BillingAPI260.vb" />
+    <Compile Include="260\BillingAPI260DAL.vb" />
+    <Compile Include="260\BillingAPI260DALMultiDB.vb" />
     <Compile Include="713\BillingAPI713.vb" />
     <Compile Include="713\BillingAPI713DAL.vb" />
     <Compile Include="PR\PR.vb" />

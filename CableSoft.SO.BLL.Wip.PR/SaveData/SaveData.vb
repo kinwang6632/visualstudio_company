@@ -18,6 +18,7 @@ Public Class SaveData
     Private Const fMaintain_ChangeFacility As String = "ChangeFacility"
     Private Const fMaintain_Parameter As String = "WipPara"
     Private _Ref3ServiceType As String = "C"
+    Private _Ref3FilterFaciSeqNo As String = Nothing
     Public Property Ref3ServiceType() As String
         Get
             Return _Ref3ServiceType
@@ -26,7 +27,14 @@ Public Class SaveData
             _Ref3ServiceType = value
         End Set
     End Property
-
+    Public Property Ref3FilterFaciSeqNo() As String
+        Get
+            Return _Ref3FilterFaciSeqNo
+        End Get
+        Set(ByVal value As String)
+            _Ref3FilterFaciSeqNo = value
+        End Set
+    End Property
 
     Public Sub New()
     End Sub
@@ -1674,6 +1682,10 @@ Public Class SaveData
                     End If
                 End If
             End Using
+            '#8802
+            If Not String.IsNullOrEmpty(Me._Ref3FilterFaciSeqNo) Then
+                strUseServiceType = _Ref3ServiceType
+            End If
             strCalcFaciRefNo = CableSoft.SO.BLL.Utility.Utility.GetServiceCanChooseRefNo(DAO, strUseServiceType, False, True)
             Dim InterDependRefNo As String = Nothing
             Using MainWorkCode As DataTable = SOUtil.GetCode(SO.BLL.Utility.CodeType.PRCode, "InterDependRefNo", "CodeNo = " & MainWip.Rows(0).Item("PRCode"))
@@ -1696,6 +1708,13 @@ Public Class SaveData
                                                               New Object() {MainWip.Rows(0)("CustId"), TempWipRow.Item("ServiceType")})
                         Using bllChangeFaci As New CableSoft.SO.BLL.Facility.ChangeFaci.ChangeFaci(LoginInfo, DAO)
                             For Each FaciRow As DataRow In FaciData.Rows
+                                '#8802
+                                If Not String.IsNullOrEmpty(Me._Ref3FilterFaciSeqNo) Then
+                                    If FaciRow.Item("SEQNO") = Me._Ref3FilterFaciSeqNo Then
+                                        Continue For
+                                    End If
+                                End If
+
                                 Dim ServiceIds As String = bllChangeFaci.GetChooseServiceIDs(FaciRow.Item("CustId"), FaciRow.Item("SeqNo"))
                                 Dim Delete003Citems As String = bllChangeFaci.GetDelete003Citem(ServiceIds)
                                 Dim newWipRow As DataRow = Nothing
@@ -1779,10 +1798,14 @@ Public Class SaveData
 
 
                                         '呼叫工單存檔
-                                        Dim result As RIAResult = Save(EditMode, False, ServiceWipData, False)
-                                        If result.ResultBoolean = False Then
-                                            Return result
-                                        End If
+                                        '#8802 需要指定回來,不然又會新增I服務PRCode.Refno = 4的資料
+
+                                        Using bllPr As New CableSoft.SO.BLL.Wip.PR.SaveData(Me.LoginInfo, Me.DAO)
+                                            Dim result As RIAResult = bllPr.Save(EditMode, False, ServiceWipData, False)
+                                            If result.ResultBoolean = False Then
+                                                Return result
+                                            End If
+                                        End Using
                                     End Using
                                 End Using
                             Next

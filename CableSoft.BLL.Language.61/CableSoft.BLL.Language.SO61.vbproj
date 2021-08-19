@@ -75,6 +75,7 @@
     <Compile Include="BillingAPI257Language.vb" />
     <Compile Include="BillingAPI258Language.vb" />
     <Compile Include="BillingAPI259Language.vb" />
+    <Compile Include="BillingAPI260Language.vb" />
     <Compile Include="BillingAPI514Language.vb" />
     <Compile Include="BillingAPI516Language.vb" />
     <Compile Include="BillingAPI600Language.vb" />

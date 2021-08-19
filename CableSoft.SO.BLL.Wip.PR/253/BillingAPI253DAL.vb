@@ -18,6 +18,9 @@
         strSQL = String.Format("Select A.CustStatusCode,A.WipCode3,B.InstAddrNo From SO002 A,SO001 B Where A.CustId = B.CustId And A.CustId = {0}0 And A.ServiceType = {0}1", Sign)
         Return strSQL
     End Function
+    Friend Function getFaciSNoBySeqNo() As String
+        Return String.Format("Select FaciSNo from so004 where seqno = {0}0", Sign)
+    End Function
     Friend Function getCD007ByCode() As String
         Return String.Format("Select Description From CD007 Where CodeNo = {0}0", Sign)
     End Function

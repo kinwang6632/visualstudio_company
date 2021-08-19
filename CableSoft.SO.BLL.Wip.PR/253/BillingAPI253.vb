@@ -12,6 +12,7 @@ Public Class BillingAPI253
     Private ServiceType As String = Nothing
     Private Lang As New CableSoft.BLL.Language.SO61.BillingAPI253Language
     Private SOUtil As CableSoft.SO.BLL.Utility.Utility = Nothing
+    Private _Ref3ServiceType As String = "C"
     '回應碼	回應狀態	回應訊息
     '0   	成功	
     '-1	    失敗	    {參數}資料有誤!!
@@ -36,6 +37,15 @@ Public Class BillingAPI253
         End If
 
     End Sub
+
+    Public Property Ref3ServiceType() As String
+        Get
+            Return _Ref3ServiceType
+        End Get
+        Set(ByVal value As String)
+            _Ref3ServiceType = value
+        End Set
+    End Property
     Private Function isRelativeFaci(ByVal intCustId As Integer, ByVal InData As System.Data.DataSet, ByVal strMainWorkCode As String) As RIAResult
         Dim strCalcFaciRefNo As String = Nothing
         Dim result As RIAResult = New RIAResult With {.ResultBoolean = True}
@@ -52,6 +62,7 @@ Public Class BillingAPI253
                             End If
                         End If
                     End Using
+                    If String.IsNullOrEmpty(InterDependRefNo) Then InterDependRefNo = "-1"
                     Using tb As DataTable = DAO.ExecQry(_DAL.GetMoveFaciData(InterDependRefNo, strCalcFaciRefNo), New Object() {intCustId, "D"})
                         If tb.Rows.Count > 0 Then
                             If DBNull.Value.Equals(InData.Tables("Sno").Rows(0).Item("DTVPRCode")) Then
@@ -79,6 +90,7 @@ Public Class BillingAPI253
                             End If
                         End If
                     End Using
+                    If String.IsNullOrEmpty(InterDependRefNo) Then InterDependRefNo = "-1"
                     Using tb As DataTable = DAO.ExecQry(_DAL.GetMoveFaciData(InterDependRefNo, strCalcFaciRefNo), New Object() {intCustId, "I"})
                         If tb.Rows.Count > 0 Then
                             If DBNull.Value.Equals(InData.Tables("Sno").Rows(0).Item("CMPRCode")) Then
@@ -198,6 +210,10 @@ Public Class BillingAPI253
         End Using
         '工單存檔
         Using bll As New SaveData(LoginInfo, DAO)
+            bll.Ref3ServiceType = Me._Ref3ServiceType
+            If (InData.Tables("SNo").Columns.Contains("FaciSeqNo")) AndAlso (Not DBNull.Value.Equals(InData.Tables("SNo").Columns.Contains("FaciSeqNo"))) Then
+                bll.Ref3FilterFaciSeqNo = InData.Tables("SNo").Rows(0).Item("FaciSeqNo")
+            End If
 
             If MoveFaciData Is Nothing Then
                 result = bll.Save(EditMode.Append, False, WipData, False)
@@ -290,24 +306,41 @@ Public Class BillingAPI253
                             WipData.Tables.Add(RetTable.Copy())
                         Next
                     End Using
-                    '指定移出變更
-                    'Using bll As New CableSoft.SO.BLL.Facility.ChangeFaci.ChangeFaci(LoginInfo, DAO)
-                    '    For Each tFaciSeqNo As String In InDataRow.Item("FaciSeqNo").ToString.Split(",")
-                    '        Dim FaciSeqNo As String = tFaciSeqNo
-                    '        If WipData.Tables("ChangeFacility").AsEnumerable.Where(Function(list) list.IsNull("SeqNo") = False AndAlso list.Item("SeqNo") = FaciSeqNo).Count = 0 Then
-                    '            Using RetData As DataSet = bll.GetMovePRFaci(SNo, FaciSeqNo)
-                    '                For Each Table As String In New String() {"Facility", "PRFacility", "ChangeFacility"}
-                    '                    For Each Row As DataRow In RetData.Tables(Table).Rows
-                    '                        WipData.Tables(Table).Rows.Add(CableSoft.BLL.Utility.Utility.CopyDataRow(Row, WipData.Tables(Table).NewRow()))
-                    '                    Next
-                    '                Next
-                    '            End Using
-                    '        End If
-                    '    Next
-                    'End Using
+                    '#8802
+                    If InWipData.Tables("SNo").Columns.Contains("FaciSeqNo") Then
+                        '指定移出變更()
+                        Using bll As New CableSoft.SO.BLL.Facility.ChangeFaci.ChangeFaci(LoginInfo, DAO)
+                            For Each tFaciSeqNo As String In InDataRow.Item("FaciSeqNo").ToString.Split(",")
+                                Dim FaciSeqNo As String = tFaciSeqNo
+                                If WipData.Tables("ChangeFacility").AsEnumerable.Where(Function(list) list.IsNull("SeqNo") = False AndAlso list.Item("SeqNo") = FaciSeqNo).Count = 0 Then
+                                    Using RetData As DataSet = bll.GetMovePRFaci(SNo, FaciSeqNo)
+                                        For Each Table As String In New String() {"Facility", "PRFacility", "ChangeFacility"}
+                                            For Each Row As DataRow In RetData.Tables(Table).Rows
+                                                WipData.Tables(Table).Rows.Add(CableSoft.BLL.Utility.Utility.CopyDataRow(Row, WipData.Tables(Table).NewRow()))
+                                            Next
+                                        Next
+                                        If WipData.Tables.Contains("Charge") Then
+                                            For Each drCharge As DataRow In WipData.Tables("Charge").Rows
+                                                drCharge("FaciSNo") = DAO.ExecSclr(_DAL.getFaciSNoBySeqNo, New Object() {tFaciSeqNo})
+                                                drCharge("FaciSeqNo") = tFaciSeqNo
+                                            Next
+                                        End If
+                                    End Using
+                                End If
+                            Next
+                        End Using
+                    End If
+                   
                 End Using
             End Using
         End Using
+        'If ServiceWipData.Tables.Contains("Charge") Then
+        '    For Each drCharge As DataRow In ServiceWipData.Tables("Charge").Rows
+        '        drCharge("FaciSNO") = FaciRow("FaciSNO")
+        '        drCharge("FaciSeqno") = FaciRow("SEQNO")
+        '    Next
+        '    ServiceWipData.Tables("Charge").AcceptChanges()
+        'End If
         '異動工單相關欄位
         If Not UpdateWipHead(InWipData, WipData) Then
             Throw New Exception("UpdateWipHead")
