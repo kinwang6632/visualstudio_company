@@ -37,10 +37,7 @@ Public Class BillingAPI260
         Try
             Using bll253 As New BillingAPI253(Me.LoginInfo, Me.DAO)
                 bll253.Ref3ServiceType = "I"
-                Dim result As RIAResult = bll253.Execute(SeqNo, InData)
-                result.ErrorMessage = "RD Debug"
-                result.ResultBoolean = False
-                result.ErrorCode = -1
+                Dim result As RIAResult = bll253.Execute(SeqNo, InData)                
                 Return result
             End Using
         Catch ex As Exception
