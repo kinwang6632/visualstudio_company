@@ -313,11 +313,9 @@ Public Class BillingAPI253
                             For Each tFaciSeqNo As String In InDataRow.Item("FaciSeqNo").ToString.Split(",")
                                 Dim FaciSeqNo As String = tFaciSeqNo
                                 If WipData.Tables("ChangeFacility").AsEnumerable.Where(Function(list) list.IsNull("SeqNo") = False AndAlso list.Item("SeqNo") = FaciSeqNo).Count = 0 Then
-                                    Using RetData As DataSet = bll.GetMovePRFaci(SNo, FaciSeqNo)
-                                        For Each Table As String In New String() {"Facility", "PRFacility", "ChangeFacility"}
-                                            For Each Row As DataRow In RetData.Tables(Table).Rows
-                                                WipData.Tables(Table).Rows.Add(CableSoft.BLL.Utility.Utility.CopyDataRow(Row, WipData.Tables(Table).NewRow()))
-                                            Next
+                                    Using RetData As DataTable = bll.GetMoveFaci(SNo, FaciSeqNo, True)
+                                        For Each Row As DataRow In RetData.Rows                                           
+                                            WipData.Tables("ChangeFacility").Rows.Add(CableSoft.BLL.Utility.Utility.CopyDataRow(Row, WipData.Tables("ChangeFacility").NewRow()))
                                         Next
                                         If WipData.Tables.Contains("Charge") Then
                                             For Each drCharge As DataRow In WipData.Tables("Charge").Rows

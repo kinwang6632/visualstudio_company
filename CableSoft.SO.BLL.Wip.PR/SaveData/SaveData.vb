@@ -1576,12 +1576,15 @@ Public Class SaveData
                                                          WipRow.Item("CustId"), WipRow.Item("ServiceType"),
                                                          WipRow.Item("ResvTime"), WipRow.Item("PRCode"))
                 '2013/01/28 Jacky 移機產生之工單也需有SO004D
-                For Each Row As DataRow In MasterWipData.Tables("ChangeFacility").Rows
-                    Dim TmpNewRow As DataRow = tmpWipData.Tables("ChangeFacility").NewRow()
-                    CableSoft.BLL.Utility.Utility.CopyDataRow(Row, TmpNewRow)
-                    TmpNewRow.Item("Kind") = SaveDataLanguage.FaciPRFromMove
-                    tmpWipData.Tables("ChangeFacility").Rows.Add(TmpNewRow)
-                Next
+                '#8802 SO004D 不需要 所以將這段註解掉(Kind是錯的 問jacky的)
+                '----------------------------------------------------------------------------------------------------
+                'For Each Row As DataRow In MasterWipData.Tables("ChangeFacility").Rows
+                '    Dim TmpNewRow As DataRow = tmpWipData.Tables("ChangeFacility").NewRow()
+                '    CableSoft.BLL.Utility.Utility.CopyDataRow(Row, TmpNewRow)
+                '    TmpNewRow.Item("Kind") = SaveDataLanguage.FaciPRFromMove
+                '    tmpWipData.Tables("ChangeFacility").Rows.Add(TmpNewRow)
+                'Next
+                '----------------------------------------------------------------------------------------------------
                 If Not CopyWipDataTable(tmpWipData, WipData, True) Then
                     Throw New Exception("AddMoveFaciPR_CopyWipDataTable")
                 End If
