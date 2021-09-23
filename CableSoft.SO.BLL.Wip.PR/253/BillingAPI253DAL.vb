@@ -58,14 +58,14 @@
         Dim strSQL As String = String.Format("Update SO009 set ReInstAddrNo={0}0,ReInstAddress={0}1, " & _
                                              "servcode = {0}2,strtcode={0}3,SalesCode={0}4,SalesName={0}5, " & _
                                              "OldAddrNo ={0}6,OldAddress={0}7 " & _
-                                     " Where SNo <> {0}8 And signdate is null And Nvl(PrtCount,0) = 0 And orderno is not null ", Sign)
+                                     " Where SNo <> {0}8 And CustId = {0}9 And  signdate is null And Nvl(PrtCount,0) = 0 And orderno is not null ", Sign)
         Return strSQL
 
     End Function
     Friend Function updSO007SnoAddr() As String
         Dim strSQL As String = String.Format("Update SO007 set AddrNo={0}0,Address={0}1, " & _
                                              "servcode = {0}2,strtcode={0}3,SalesCode={0}4,SalesName={0}5 " & _
-                                     " Where 1=1 And signdate is null And Nvl(PrtCount,0) = 0", Sign)
+                                     " Where 1=1 And Custid = {0}6 And signdate is null And Nvl(PrtCount,0) = 0", Sign)
         Return strSQL
 
     End Function

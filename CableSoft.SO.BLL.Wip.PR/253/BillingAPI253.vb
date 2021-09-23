@@ -256,11 +256,12 @@ Public Class BillingAPI253
             Dim SalesCode As Object = WipData.Tables("Wip").Rows(0).Item("SalesCode")
             Dim SalesName As Object = WipData.Tables("Wip").Rows(0).Item("SalesName")
             Dim sno As Object = WipData.Tables("Wip").Rows(0).Item("SNo")
+            Dim custid As Object = WipData.Tables("Wip").Rows(0).Item("CustId")
             DAO.ExecSclr(_DAL.updSO009SnoAddr, New Object() {ReInstAddrNo, ReInstAddress, _
-                                                             servcode, strtcode, SalesCode, SalesName, ReInstAddrNo, ReInstAddress, sno})
+                                                             servcode, strtcode, SalesCode, SalesName, ReInstAddrNo, ReInstAddress, sno, custid})
 
             DAO.ExecSclr(_DAL.updSO007SnoAddr, New Object() {ReInstAddrNo, ReInstAddress, _
-                                                             servcode, strtcode, SalesCode, SalesName})
+                                                             servcode, strtcode, SalesCode, SalesName, custid})
             Return result
         Catch ex As Exception
             result.ErrorMessage = ex.ToString
