@@ -226,6 +226,7 @@ Public Class BillingAPI253
             End If
         End Using
         '#8787 客戶派CATV移機單時，若有未結案的促變工單、加購工單，其工單地址需改成移機新址
+        '#8818 增加串客編、fintime is null and returncode is null By Kin 2021/09/23
         If (Not DBNull.Value.Equals(InData.Tables("SNo").Rows(0).Item("UseReInstaddr"))) AndAlso _
                 (Integer.Parse(InData.Tables("SNo").Rows(0).Item("UseReInstaddr")) = 1) Then
             result = updOtherSNoAddress(WipData)

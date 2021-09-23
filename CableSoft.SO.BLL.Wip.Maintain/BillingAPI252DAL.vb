@@ -50,11 +50,12 @@ Public Class BillingAPI252DAL
         Return String.Format("Select EmpNo,EmpName From CM003 Where EmpNo ={0}0", Sign)
     End Function
     Friend Function getSO009Reinstaddrno() As String
-        
+        '#8818 因為有些舊資料有SIGNDATE沒有FINTIME,RETURNCODE,所以再麻煩RD UPDATE時多串fintime is null and returncode is null for debby
         Dim strSQL As String = String.Format("Select ReInstAddrNo,ReInstAddress,servcode," & _
                                              " strtcode,SalesCode,SalesName from SO009 " & _
                                              " Where PrCode in (Select CodeNo From CD007 where refno = 3) " & _
-                                             " And ServiceType = {0}0 And Custid = {0}1 And signdate is null", Sign)
+                                             " And ServiceType = {0}0 And Custid = {0}1 And signdate is null " & _
+                                             " And FinTime is Null And ReturnCode is Null ", Sign)
         Return strSQL
     End Function
 #Region "IDisposable Support"
