@@ -209,6 +209,7 @@ Public Class BillingAPI253
             End If
         End Using
         '工單存檔
+
         Using bll As New SaveData(LoginInfo, DAO)
             bll.Ref3ServiceType = Me._Ref3ServiceType
             If (InData.Tables("SNo").Columns.Contains("FaciSeqNo")) AndAlso (Not DBNull.Value.Equals(InData.Tables("SNo").Columns.Contains("FaciSeqNo"))) Then

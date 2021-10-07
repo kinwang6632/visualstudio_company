@@ -24,7 +24,7 @@
             Case CableSoft.BLL.Utility.Utility.DataBaseName.PostgreSql
                 Return String.Format("SELECT A.CTID::text,A.*,NVL(B.REFNO,0) FACIREFNO " &
                              " FROM SO004 A,CD022 B " &
-                             " WHERE A.FACICODE = B.CODENO AND A.SEQNO = {0}0", Sign)
+                             " WHERE A.FACICODE = B.CODENO AND  A.PRDATE IS NULL And A.GetDate IS NULL AND A.SEQNO = {0}0", Sign)
             Case Else
                 Return MyBase.GetChangeData
         End Select

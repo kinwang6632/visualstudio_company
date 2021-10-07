@@ -22,11 +22,14 @@ Public Class BillingAPI252DAL
         Return aSQL
     End Function
     Function QueryFaciSeqno() As String
+        '#8827 增加 PRDATE IS NULL AND GetDate IS  NULL
         Dim aSQL As String = String.Format("Select SEQNO From SO004 " & _
                                     " Where facisno = {0}0 " & _
                                     " And ServiceType = {0}1 " & _
+                                    " And PRDATE IS NULL " & _
+                                    " And GetDate IS  NULL " & _
                                     " And CustId = {0}2", Sign)
-        Return aSQL        
+        Return aSQL
     End Function
     Friend Function QuerySO006() As String
         Return String.Format("Select * From SO006 Where SEQNo = {0}0", Sign)

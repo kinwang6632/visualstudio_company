@@ -176,7 +176,7 @@ Public Class ChangeFaciDAL
     Friend Overridable Function GetChangeData() As String
         Return String.Format("SELECT A.RowId AS CTID,A.*,NVL(B.REFNO,0) FACIREFNO " &
                              " FROM SO004 A,CD022 B " &
-                             " WHERE A.FACICODE = B.CODENO AND A.SEQNO = {0}0", Sign)
+                             " WHERE A.FACICODE = B.CODENO AND A.PRDATE IS NULL And A.GetDate IS NULL And  A.SEQNO = {0}0", Sign)
     End Function
     Friend Overridable Overloads Function GetChildFaci() As String
         Return String.Format("SELECT A.RowId AS CTID,A.* FROM SO004 A " &

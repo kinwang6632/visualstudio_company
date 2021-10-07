@@ -697,7 +697,7 @@ Public Class ChangeFaci
                                               ByVal filterDVR As Boolean,
                                               ByVal dsWipSource As DataSet, ByVal KindType As Integer) As DataTable
         Dim objWipUtility As New CableSoft.SO.BLL.Wip.Utility.Utility(Me.LoginInfo, DAO)
-        Dim dsWip As DataSet = objWipUtility.GetWipDetail("X", False, BLL.Utility.InvoiceType.Maintain)
+        Dim dsWip As DataSet = objWipUtility.GetWipDetail("X", False, BLL.Utility.InvoiceType.Maintain)        
         Dim tbChangeData As DataTable = DAO.ExecQry(_DAL.GetChangeData, New Object() {FaciSeqNo})
         Dim tbChildFaci As DataTable = Nothing
         Dim dtRet As DataTable = Nothing
